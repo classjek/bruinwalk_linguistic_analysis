@@ -18,7 +18,9 @@ Bruinwalk also doesn't include gender so we will also be training a model to do 
 
 Jake Ekoniak  
 - [@classjek](https://www.github.com/classjek)
+
 Ethan Warren    
 - [@ethanmwarren](https://www.github.com/classjek)
+
 Tej Thambi   
 - [@tej-thambi](https://www.github.com/tej-thambi)
