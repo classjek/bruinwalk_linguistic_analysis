@@ -1,5 +1,5 @@
 # bruinwalk_linguistic_analysis
-A computational analysis of UCLA's teacher review website
+A computational analysis of UCLA's teacher review website,
 
 What's up team 
 
