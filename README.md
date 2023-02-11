@@ -14,6 +14,9 @@ Bruinwalk also doesn't include gender so we will also be training a model to do 
 [Boy or Girl?](https://towardsdatascience.com/boy-or-girl-a-machine-learning-web-app-to-detect-gender-from-name-16dc0331716c)  
 [Gender-API](gender-api.com)
 
+I have also been reading about a concept called Datasheets for Datasets. It is basically a thoughtful acknowledgement and documentation of how the data was sourced, how we accessed it, and its potential flaws. Here is where you can read more about it   
+[Microsoft Datasheets for Datasets](https://www.microsoft.com/en-us/research/project/datasheets-for-datasets/)
+
 ## Authors
 
 Jake Ekoniak  
