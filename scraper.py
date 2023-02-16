@@ -17,23 +17,40 @@ class Review:
 
 # grades are held in a wierd text with lots of extra space so this will clean them up
 # this could definitely be optimized but this program will only run once so who cares
+# make it so that if you find the first letter, A, B,... then you check for +'s and -'s
 def get_grade(raw_grade):
     if(raw_grade.find('N/A') != -1):
         return('N/A')
-    elif(raw_grade.find('A+') != -1):
-        return('A+')
-    elif(raw_grade.find('A-') != -1):
-        return('A-')
     elif(raw_grade.find('A') != -1):
-        return('A')
-    elif(raw_grade.find('B+') != -1):
-        return('B+')
-    elif(raw_grade.find('B-') != -1):
-        return('B-')
+        if(raw_grade.find('A-') != -1):
+            return('A-')
+        elif(raw_grade.find('A+') != -1):
+            return('A+')
+        else:
+            return('A')  
     elif(raw_grade.find('B') != -1):
-        return('B')
+        if(raw_grade.find('B-') != -1):
+            return('B-')
+        elif(raw_grade.find('B+') != -1):
+            return('B+')
+        else:
+            return('B')
+    elif(raw_grade.find('C') != -1):
+        if(raw_grade.find('C-') != -1):
+            return('C-')
+        elif(raw_grade.find('C+') != -1):
+            return('C+')
+        else:
+            return('C')
+    elif(raw_grade.find('D') != -1):
+        if(raw_grade.find('D-') != -1):
+            return('D-')
+        elif(raw_grade.find('D+') != -1):
+            return('D+')
+        else:
+            return('D')
     else:
-        print('this kid aint no winner')
+        return('F')
 
 # given an href for a class, this function will return a list of 
 def grab_classes(href, name):
@@ -115,7 +132,7 @@ for c in classes:
     grab_classes(c.find('a').get('href'))
 """
 
-grab_classes("/professors/stephen-j-dickey/engl-90/", 'Stephen Dickey')
+grab_classes("/professors/paul-r-eggert/com-sci-35l/", 'Eggert')
 
 
 
