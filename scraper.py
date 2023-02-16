@@ -1,16 +1,39 @@
 import requests
 from bs4 import BeautifulSoup
 
+# each professor will have a list of reviews under their name
+# this is so we can easily test with different control variables without having to sort through every review 
 class Professor:
     def __init__(self, name):
         self.name = name
         self.classes = []
 
+
 class Review:
     def __init__(self, name):
         self.name = name
-        self.grade = 0
+        self.grade = ""
         self.text = ""
+
+# grades are held in a wierd text with lots of extra space so this will clean them up
+# this could definitely be optimized but this program will only run once so who cares
+def get_grade(raw_grade):
+    if(raw_grade.find('N/A') != -1):
+        return('N/A')
+    elif(raw_grade.find('A+') != -1):
+        return('A+')
+    elif(raw_grade.find('A-') != -1):
+        return('A-')
+    elif(raw_grade.find('A') != -1):
+        return('A')
+    elif(raw_grade.find('B+') != -1):
+        return('B+')
+    elif(raw_grade.find('B-') != -1):
+        return('B-')
+    elif(raw_grade.find('B') != -1):
+        return('B')
+    else:
+        print('this kid aint no winner')
 
 # given an href for a class, this function will return a list of 
 def grab_classes(href, name):
@@ -26,16 +49,26 @@ def grab_classes(href, name):
     reviews_block = class_page.find('div', 'reviews row')
     reviews = reviews_block.find_all('div', 'review reviewcard')
 
+    teach = []
     # for each review, create a review object containing
     # the grade, title, and text of the review 
     for _ in reviews: 
         temp_review = Review(name)
         #print(type(_))
         text = _.find('div', class_='grade-margin')
+        temp_review.grade = get_grade(text.text)
+
         #print(type(text), text.text)
         text = _.find('div', class_='expand-area review-paragraph')
         paragraph = text.find('p')
-        print(paragraph.text)
+
+        temp_review.text = paragraph.text
+        #print(paragraph.text)
+        teach.append(temp_review)
+
+    for review in teach:
+        print(review.grade)
+
 
 
 
