@@ -15,7 +15,9 @@ Here are the libraries we are currently looking into. I am leaning toward GloVe 
 And here is a cool course:  
 [Practical Deep Learning](https://course.fast.ai/)  
 And another  
-[fast.ai word embeddings workshop](https://www.youtube.com/watch?v=25nC0n9ERq4)  
+[fast.ai word embeddings workshop](https://www.youtube.com/watch?v=25nC0n9ERq4)    
+and more fast.ai 
+[NLP for beginners](https://www.kaggle.com/code/jhoward/getting-started-with-nlp-for-absolute-beginners)
 
 
 Bruinwalk also doesn't include gender so we will also be training a model to do that. Below is an article by someone who did something similar as well as an API that we can compare out results to. And in cases where our model is unsure, we can check it by hand.  
