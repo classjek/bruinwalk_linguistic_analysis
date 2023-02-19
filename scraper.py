@@ -58,41 +58,22 @@ def get_grade(raw_grade):
 # Given the href of a class, this will grab every review from that class 
 # maybe load the page here and then pass it through as a parameter?
 def through_class(href):
-    #grab_classes(href, profname)
+    val = grab_classes(href, 'dummyName')
 
-    # load the page
-    response = requests.get(web_add + href)
-    try:
-        response.raise_for_status()
-    except Exception as exc:
-        print("There was a problem fetching a class page: %s" % (exc))
-
-    # check if there are more pages
-    class_page = BeautifulSoup(response.text, 'html.parser')
-
-    paginator = class_page.find('div', class_='paginator')
-    next_page = paginator.find_all('a')
-    pool = next_page[1].get('class')
-    print(pool)
-
-    if next_page[1].get('class') != 'disabled':
-        dum_grab(next_page[1].get('href'), 'yo mom')
-        response = requests.get(web_add + href)
-        class_page = BeautifulSoup(response.text, 'html.parser')
-        paginator = class_page.find('div', class_='paginator')
-        next_page = paginator.find_all('a')
+    bruh = 0
+    while val != 0:
+        grab_classes(val, 'dummyName')
+        bruh +=1
+        if bruh > 5:
+            break
 
 
 
-def dum_grab(href, profname):
-    print('get the goodies for', profname, 'from', href)
-
-
-
+# make this return 0 or the href of the next page 
 # given an href for a page of reviews, this will grab the text and grade from each review and return a list of them 
 def grab_classes(href, prof_name):
 
-    print(prof_name.name)
+    #print(prof_name.name)
     # load the web page 
     response = requests.get(web_add + href)
     try:
@@ -109,6 +90,8 @@ def grab_classes(href, prof_name):
 
     #eventually make this a class object and have that class belong to the prof
     teach = []
+
+    print('Grabbing shit from', href)
 
     """
     # for each review, create a review object containing
@@ -131,11 +114,15 @@ def grab_classes(href, prof_name):
         print(review.grade)
     """
     # grab the next page 
-    """
     pages = class_page.find('div', 'paginator')
     span = pages.find_all('a')
-    href = span[1].get('href')
-    """
+    if span[1].text == 'disabled':
+        print('zero')
+        return 0
+    else:
+        print('directing to', span[1].get('href'), '\n')
+
+        return span[1].get('href')
 
 
     
@@ -187,7 +174,7 @@ for c in classes:
 
 egg = Professor('Eggert')
 
-grab_classes("/professors/paul-r-eggert/com-sci-35l/", egg)
+#grab_classes("/professors/paul-r-eggert/com-sci-35l/", egg)
 through_class("/professors/paul-r-eggert/com-sci-35l/")
 
 
