@@ -60,12 +60,9 @@ def get_grade(raw_grade):
 def through_class(href):
     val = grab_classes(href, 'dummyName')
 
-    bruh = 0
     while val != 0:
-        grab_classes(val, 'dummyName')
-        bruh +=1
-        if bruh > 5:
-            break
+        #grab_classes(val, 'dummyName')
+        val = grab_classes(val, 'dummyName')
 
 
 
@@ -120,7 +117,7 @@ def grab_classes(href, prof_name):
         print('zero')
         return 0
     else:
-        print('directing to', span[1].get('href'), '\n')
+        print(len(span), 'directing to', span[1].get('href'), '\n')
 
         return span[1].get('href')
 
