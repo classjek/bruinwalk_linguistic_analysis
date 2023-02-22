@@ -57,18 +57,18 @@ def get_grade(raw_grade):
 
 # Given the href of a class, this will grab every review from that class 
 # maybe load the page here and then pass it through as a parameter?
-def through_class(href):
-    val = grab_classes(href, 'dummyName')
+def through_class(href, revlist):
+
+    val = grab_classes(href, 'dummyName', revlist)
 
     while val != 0:
-        #grab_classes(val, 'dummyName')
-        val = grab_classes(val, 'dummyName')
+        val = grab_classes(val, 'dummyName', revlist)
 
 
 
 # make this return 0 or the href of the next page 
 # given an href for a page of reviews, this will grab the text and grade from each review and return a list of them 
-def grab_classes(href, prof_name):
+def grab_classes(href, prof_name, revlist):
 
     #print(prof_name.name)
     # load the web page 
@@ -85,16 +85,10 @@ def grab_classes(href, prof_name):
     reviews = reviews_block.find_all('div', 'review reviewcard')
 
 
-    #eventually make this a class object and have that class belong to the prof
-    teach = []
-
-    print('Grabbing shit from', href)
-
-    """
     # for each review, create a review object containing
     # the grade, title, and text of the review 
     for _ in reviews: 
-        temp_review = Review(prof_name.name)
+        temp_review = Review(prof_name)
         #print(type(_))
         text = _.find('div', class_='grade-margin')
         temp_review.grade = get_grade(text.text)
@@ -105,27 +99,15 @@ def grab_classes(href, prof_name):
 
         temp_review.text = paragraph.text
         #print(paragraph.text)
-        teach.append(temp_review)
+        revlist.append(temp_review)
 
-    for review in teach:
-        print(review.grade)
-    """
     # grab the next page 
     pages = class_page.find('div', 'paginator')
     span = pages.find_all('a')
-    if span[1].text == 'disabled':
-        print('zero')
+    if span[1].get('href') == None:
         return 0
     else:
-        print(len(span), 'directing to', span[1].get('href'), '\n')
-
         return span[1].get('href')
-
-
-    
-
-
-
 
 
 
@@ -172,7 +154,13 @@ for c in classes:
 egg = Professor('Eggert')
 
 #grab_classes("/professors/paul-r-eggert/com-sci-35l/", egg)
-through_class("/professors/paul-r-eggert/com-sci-35l/")
+revlist = []
+
+through_class("/professors/paul-r-eggert/com-sci-35l/", revlist)
+
+print('done')
+print(len(revlist))
+
 
 
 
