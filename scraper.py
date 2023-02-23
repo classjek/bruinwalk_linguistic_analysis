@@ -1,5 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
+import time
 
 # each professor will have a list of reviews under their name
 # this is so we can easily test with different control variables without having to sort through every review 
@@ -12,6 +13,7 @@ class Class:
     def __init__(self, name, href):
         self.name = name
         self.href = href
+        self.reviews = []
 
 class Review:
     def __init__(self, name):
@@ -56,13 +58,21 @@ def get_grade(raw_grade):
         return('F')
 
 # Given the href of a class, this will grab every review from that class 
-# maybe load the page here and then pass it through as a parameter?
-def through_class(href, revlist):
+# maybe have this return a class object with the name of the class 
+def through_class(class_name, href):
 
-    val = grab_classes(href, 'dummyName', revlist)
+    # intialize Class object
+    one_class = Class(class_name, href)
 
+    # just put this in the for loop lol
+    val = grab_classes(href, 'dummyName', one_class.reviews)
+
+    # add reviews from each page to one_class's list of reviews
+    # grab_classes will return 0 if there exist no more pages 
     while val != 0:
-        val = grab_classes(val, 'dummyName', revlist)
+        val = grab_classes(val, 'dummyName', one_class.reviews)
+    
+    return one_class
 
 
 
@@ -88,16 +98,23 @@ def grab_classes(href, prof_name, revlist):
     # for each review, create a review object containing
     # the grade, title, and text of the review 
     for _ in reviews: 
+        # create review object
         temp_review = Review(prof_name)
-        #print(type(_))
+    
+        # get grade attached to review 
         text = _.find('div', class_='grade-margin')
         temp_review.grade = get_grade(text.text)
 
-        #print(type(text), text.text)
+        # get the text of the review, could be stored in multiple <p> components
         text = _.find('div', class_='expand-area review-paragraph')
-        paragraph = text.find('p')
+        paragraph = text.find_all('p')
+        # multi paragraph handling
+        if len(paragraph) > 1:
+            for p in paragraph: 
+                temp_review.text = temp_review.text + ' ' + p.text
+        else: 
+            temp_review.text = paragraph[0].text
 
-        temp_review.text = paragraph.text
         #print(paragraph.text)
         revlist.append(temp_review)
 
@@ -132,12 +149,14 @@ def all_classes(href):
 
     for _ in classes:
         yohf = _.find('a').get('href')
+        class_title = _.find('a').find('span').text
         prof_classes.append(yohf)
-    print('grabbed all class href for', prof_obj.name, len(prof_classes))
+        print(class_title)
     prof_obj.classes = prof_classes
     return prof_obj
 
 
+start_time = time.time()
 
 # load initial webpage of professors
 response = requests.get("https://www.bruinwalk.com/search/?category=professors")
@@ -153,12 +172,15 @@ elems = browse.find_all('div', class_='result-card flex-container')
 
 web_add = 'https://www.bruinwalk.com'
 
+# cycles throuhg each professor on the first page, callng all_classes and grabbing all of the classes that are prosent on their first page
+"""
 for _ in elems:
     profref = _.find('div', 'flex-container professor-meta-content').find('a').get('href')
     name = all_classes(profref)
-    print(name.name, len(name.classes))
+    print(name.name, len(name.classes), '\n')
 
 print('len elemens', len(elems))
+"""
 
 
 egg = Professor('Eggert')
@@ -166,9 +188,16 @@ egg = Professor('Eggert')
 #grab_classes("/professors/paul-r-eggert/com-sci-35l/", egg)
 revlist = []
 
-#through_class("/professors/paul-r-eggert/com-sci-35l/", revlist)
-
+#test = through_class('COM SCI 35L', "/professors/paul-r-eggert/com-sci-35l/")
+test = through_class('MGMT 289Y',"/professors/sebastian-edwards/mgmt-289y/")
+print(len(test.reviews))
 print('done')
+
+
+end_time = time.time()
+runtime = end_time - start_time
+
+print(f"Runtimet: {runtime:.2f} seconds")
 
 
 

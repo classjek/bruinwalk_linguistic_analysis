@@ -29,6 +29,10 @@ Bruinwalk also doesn't include gender so we will also be training a model to do 
 I have also been reading about a concept called Datasheets for Datasets. It is basically a thoughtful acknowledgement and documentation of how the data was sourced, how we accessed it, and its potential flaws. Here is where you can read more about it:     
 [Microsoft Datasheets for Datasets](https://www.microsoft.com/en-us/research/project/datasheets-for-datasets/)
 
+## How this Data was gathered
+tbc
+
+
 ## Authors
 
 Jake Ekoniak  
