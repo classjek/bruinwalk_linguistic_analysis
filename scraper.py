@@ -58,19 +58,19 @@ def get_grade(raw_grade):
         return('F')
 
 # Given the href of a class, this will grab every review from that class 
-# maybe have this return a class object with the name of the class 
+# will return a class object with every review in its reviews list
 def through_class(class_name, href):
 
     # intialize Class object
     one_class = Class(class_name, href)
 
     # just put this in the for loop lol
-    val = grab_classes(href, 'dummyName', one_class.reviews)
+    val = grab_reviews(href, 'dummyName', one_class.reviews)
 
     # add reviews from each page to one_class's list of reviews
-    # grab_classes will return 0 if there exist no more pages 
+    # grab_reviews will return 0 if there exist no more pages 
     while val != 0:
-        val = grab_classes(val, 'dummyName', one_class.reviews)
+        val = grab_reviews(val, 'dummyName', one_class.reviews)
     
     return one_class
 
@@ -78,7 +78,7 @@ def through_class(class_name, href):
 
 # make this return 0 or the href of the next page 
 # given an href for a page of reviews, this will grab the text and grade from each review and return a list of them 
-def grab_classes(href, prof_name, revlist):
+def grab_reviews(href, prof_name, revlist):
 
     #print(prof_name.name)
     # load the web page 
@@ -125,10 +125,11 @@ def grab_classes(href, prof_name, revlist):
         return 0
     else:
         return span[1].get('href')
+    
 
-# need to add multi page for this
-# give this an href to a professor and it will return a professor object
-def all_classes(href):
+# very similar idea to grab_reviews, get every class on a page of a given href, if there is another page beyond it
+# return an href to it, if not, return 0 
+def every_class(href, class_list):
 
     # load the professors page 
     prof_page = requests.get(web_add + href)
@@ -139,20 +140,42 @@ def all_classes(href):
 
     browse = BeautifulSoup(prof_page.text, 'html.parser')
 
-    # get prof's name and initialize Professor object
-    prof_obj = Professor(browse.find('div', class_='aggregate-header content-row').find('h2').text)
+    class_container = browse.find_all('div', 'title-container')
+    
+    for class_comp in class_container: 
+        # grab the name and href for each class in preperation for through_class()
+        href = class_comp.find('h2').find('a').get('href')
+        class_name = class_comp.find('h2').find('a').text
+        #print(class_name, '\n', href, '\n')
 
-    # grab each of the professors classes as an element
-    classes = browse.find_all('div', 'title-container')
+        # call through_class to get a class obj with every review, add to list
+        class_list.append(through_class(class_name, href))
 
-    prof_classes = []
+    # grab the next page 
+    pages = browse.find('div', 'paginator')
+    span = pages.find_all('a')
+    if span[1].get('href') == None:
+        return 0
+    else:
+        return span[1].get('href')
 
-    for _ in classes:
-        yohf = _.find('a').get('href')
-        class_title = _.find('a').find('span').text
-        prof_classes.append(yohf)
-        print(class_title)
-    prof_obj.classes = prof_classes
+    
+    
+
+
+# give an href to a prof's page and their name
+# will return a Professor object who's classes list is full of class objects
+def all_classes(href, professor_name):
+
+
+    prof_obj = Professor(professor_name)
+    
+    every_class(href, prof_obj.classes)
+
+    val = every_class(href, prof_obj.classes)
+    while val != 0:
+        val = every_class(val, prof_obj.classes)
+
     return prof_obj
 
 
@@ -182,16 +205,23 @@ for _ in elems:
 print('len elemens', len(elems))
 """
 
-
-egg = Professor('Eggert')
-
 #grab_classes("/professors/paul-r-eggert/com-sci-35l/", egg)
-revlist = []
 
+"""
 #test = through_class('COM SCI 35L', "/professors/paul-r-eggert/com-sci-35l/")
 test = through_class('MGMT 289Y',"/professors/sebastian-edwards/mgmt-289y/")
 print(len(test.reviews))
 print('done')
+"""
+
+egg = all_classes('/professors/daniel-m-t-fessler/', 'Daniel Fessler')
+print('Daniel teaches', len(egg.classes), 'classes')
+
+total = 0
+for _ in egg.classes:
+    total = total + len(_.reviews)
+
+print('Daniel has a total of', total, 'reviews')
 
 
 end_time = time.time()
