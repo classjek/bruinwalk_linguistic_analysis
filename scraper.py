@@ -109,6 +109,34 @@ def grab_classes(href, prof_name, revlist):
     else:
         return span[1].get('href')
 
+# need to add multi page for this
+# give this an href to a professor and it will return a professor object
+def all_classes(href):
+
+    # load the professors page 
+    prof_page = requests.get(web_add + href)
+    try:
+        prof_page.raise_for_status()
+    except Exception as exc:
+        print('There was a problem loading a professor\'s page: %s' % (exc))
+
+    browse = BeautifulSoup(prof_page.text, 'html.parser')
+
+    # get prof's name and initialize Professor object
+    prof_obj = Professor(browse.find('div', class_='aggregate-header content-row').find('h2').text)
+
+    # grab each of the professors classes as an element
+    classes = browse.find_all('div', 'title-container')
+
+    prof_classes = []
+
+    for _ in classes:
+        yohf = _.find('a').get('href')
+        prof_classes.append(yohf)
+    print('grabbed all class href for', prof_obj.name, len(prof_classes))
+    prof_obj.classes = prof_classes
+    return prof_obj
+
 
 
 # load initial webpage of professors
@@ -125,41 +153,22 @@ elems = browse.find_all('div', class_='result-card flex-container')
 
 web_add = 'https://www.bruinwalk.com'
 
-prof = elems[0].find('div', 'flex-container professor-meta-content')
+for _ in elems:
+    profref = _.find('div', 'flex-container professor-meta-content').find('a').get('href')
+    name = all_classes(profref)
+    print(name.name, len(name.classes))
 
+print('len elemens', len(elems))
 
-# will put into large for loop, right now loops through one professor 
-phref = prof.find('a').get('href')
-p1 = Professor(prof.find('a', class_= 'professor-name flex-item flex-middle').text)
-
-
-# load professor's individual web page 
-prof_page = requests.get(web_add + phref)
-try:
-    prof_page.raise_for_status()
-except Exception as exc:
-    print('There was a problem loading a professor\'s page: %s' % (exc))
-
-browse = BeautifulSoup(prof_page.text, 'html.parser')
-
-# grab each of the professors classes as an element
-classes = browse.find_all('div', 'title-container')
-
-# tbc
-"""
-for c in classes:
-    grab_classes(c.find('a').get('href'))
-"""
 
 egg = Professor('Eggert')
 
 #grab_classes("/professors/paul-r-eggert/com-sci-35l/", egg)
 revlist = []
 
-through_class("/professors/paul-r-eggert/com-sci-35l/", revlist)
+#through_class("/professors/paul-r-eggert/com-sci-35l/", revlist)
 
 print('done')
-print(len(revlist))
 
 
 
