@@ -158,8 +158,52 @@ def every_class(href, class_list):
         return 0
     else:
         return span[1].get('href')
-
     
+
+def every_professor(href, prof_list):
+    # load the webpage 
+    prof_page = requests.get(web_add + href)
+    try:
+        prof_page.raise_for_status()
+    except Exception as exc:
+        print('There was a problem loading a professor\'s page: %s' % (exc))
+
+    browse = BeautifulSoup(prof_page.text, 'html.parser')
+    elems = browse.find_all('div', class_='result-card flex-container')
+
+    for prof_comp in elems:
+        prof_ref = prof_comp.find('div', 'flex-container professor-meta-content').find('a').get('href')
+        prof_name = prof_comp.find('div', 'flex-container professor-meta-content').find(class_='professor-name flex-item flex-middle').text
+        #print(prof_name, '\n', prof_ref)
+        
+        prof_list.append(prof_name)
+
+    # grab the next page 
+    pages = browse.find('div', 'paginator')
+    span = pages.find_all('a')
+    if span[1].get('href') == None:
+        return 0
+    else:
+        return span[1].get('href')
+    
+
+
+
+# give this an href to a certain department and it will grab all of the professors from that department
+def all_professors(href):
+
+    prof_list = []
+    val = every_professor(href, prof_list)
+
+    while val != 0:
+        #print('before', val)
+        val = every_professor(val, prof_list)
+        #print('after', val)
+
+    # return list full of professors
+    return prof_list
+
+
     
 
 
@@ -177,6 +221,25 @@ def all_classes(href, professor_name):
         val = every_class(val, prof_obj.classes)
 
     return prof_obj
+
+
+def get_department():
+
+    for n in range(25):
+        url = 'https://www.bruinwalk.com/search/?category=professors&dept=' + str(n)
+        
+        # load initial webpage of professors
+        response = requests.get("https://www.bruinwalk.com/search/?category=professors")
+        try:
+            response.raise_for_status()
+        except Exception as exc:
+            print("There was a problem fetching the department page: %s" % (exc))
+        
+        #load potential department apge
+        browse = BeautifulSoup(response.text, 'html.parser')
+
+
+
 
 
 start_time = time.time()
@@ -207,13 +270,9 @@ print('len elemens', len(elems))
 
 #grab_classes("/professors/paul-r-eggert/com-sci-35l/", egg)
 
-"""
-#test = through_class('COM SCI 35L', "/professors/paul-r-eggert/com-sci-35l/")
-test = through_class('MGMT 289Y',"/professors/sebastian-edwards/mgmt-289y/")
-print(len(test.reviews))
-print('done')
-"""
 
+# oh yeah, grab evey class for this dude with reviews and everything
+"""
 egg = all_classes('/professors/daniel-m-t-fessler/', 'Daniel Fessler')
 print('Daniel teaches', len(egg.classes), 'classes')
 
@@ -222,12 +281,22 @@ for _ in egg.classes:
     total = total + len(_.reviews)
 
 print('Daniel has a total of', total, 'reviews')
+"""
+
+# grabs all profs from default professors
+"""
+myL = all_professors('/search/?category=professors')
+print(len(myL))
+"""
+
+get_department()
+
 
 
 end_time = time.time()
 runtime = end_time - start_time
 
-print(f"Runtimet: {runtime:.2f} seconds")
+print(f"Run time: {runtime:.2f} seconds")
 
 
 
