@@ -225,11 +225,11 @@ def all_classes(href, professor_name):
 
 def get_department():
 
-    for n in range(25):
-        url = 'https://www.bruinwalk.com/search/?category=professors&dept=' + str(n)
+    for n in range(100):
+        url = 'https://www.bruinwalk.com/search/?category=classes&dept=' + str(n)
         
         # load initial webpage of professors
-        response = requests.get("https://www.bruinwalk.com/search/?category=professors")
+        response = requests.get(url)
         try:
             response.raise_for_status()
         except Exception as exc:
@@ -237,6 +237,12 @@ def get_department():
         
         #load potential department apge
         browse = BeautifulSoup(response.text, 'html.parser')
+        
+        class_name = browse.find('div', class_='class-id')
+        if class_name == None:
+            print('nothing found')
+        else:
+            print(class_name.text, n)
 
 
 
@@ -290,6 +296,8 @@ print(len(myL))
 """
 
 get_department()
+
+
 
 
 
