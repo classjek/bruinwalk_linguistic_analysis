@@ -1,6 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
 import time
+import csv
 
 # each professor will have a list of reviews under their name
 # this is so we can easily test with different control variables without having to sort through every review 
@@ -20,6 +21,11 @@ class Review:
         self.name = name
         self.grade = ""
         self.text = ""
+
+class Department:
+    def __init__(self, name, href):
+        self.name = name
+        self.href = href
 
 # grades are held in a wierd text with lots of extra space so this will clean them up
 # this could definitely be optimized but this program will only run once so who cares
@@ -225,7 +231,9 @@ def all_classes(href, professor_name):
 
 def get_department():
 
-    for n in range(100):
+    all_deps = []
+
+    for n in range(300):
         url = 'https://www.bruinwalk.com/search/?category=classes&dept=' + str(n)
         
         # load initial webpage of professors
@@ -239,10 +247,29 @@ def get_department():
         browse = BeautifulSoup(response.text, 'html.parser')
         
         class_name = browse.find('div', class_='class-id')
-        if class_name == None:
-            print('nothing found')
-        else:
-            print(class_name.text, n)
+
+        # if the name is valid, add 
+        if class_name != None:
+            name = class_name.text.split()
+            delimiter = ' '
+            name = delimiter.join(name[0:-1])
+            temp_dep = Department(name, 'https://www.bruinwalk.com/search/?category=classes&dept=' + str(n))
+            all_deps.append(temp_dep)
+    
+    for _ in all_deps:
+        print(_.name)
+    print(len(all_deps))
+
+    # write the department names and hrefs to a csv file
+    with open('ucla_department.csv', 'w', newline = '') as csvfile:
+        fieldnames = ['name', 'link']
+        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+        writer.writeheader()
+        for obj in all_deps:
+            writer.writerow({'name':obj.name, 'link':obj.href})
+
+
+        
 
 
 
@@ -295,7 +322,16 @@ myL = all_professors('/search/?category=professors')
 print(len(myL))
 """
 
-get_department()
+department = []
+
+# grab departments from csv file
+with open('ucla_department.csv', 'r', newline = '') as csvfile:
+    reader = csv.DictReader(csvfile)
+    for row in reader:
+        temp_dep = Department(row['name'], row['link'])
+        department.append(temp_dep)
+
+print(len(department))
 
 
 
