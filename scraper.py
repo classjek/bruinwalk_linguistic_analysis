@@ -22,11 +22,6 @@ class Review:
         self.grade = ""
         self.text = ""
 
-class Department:
-    def __init__(self, name, href):
-        self.name = name
-        self.href = href
-
 # grades are held in a wierd text with lots of extra space so this will clean them up
 # this could definitely be optimized but this program will only run once so who cares
 def get_grade(raw_grade):
@@ -233,8 +228,8 @@ def get_department():
 
     all_deps = []
 
-    for n in range(300):
-        url = 'https://www.bruinwalk.com/search/?category=classes&dept=' + str(n)
+    for n in range(250):
+        url = 'https://www.bruinwalk.com/search/?category=professors&dept=' + str(n)
         
         # load initial webpage of professors
         response = requests.get(url)
@@ -246,27 +241,24 @@ def get_department():
         #load potential department apge
         browse = BeautifulSoup(response.text, 'html.parser')
         
-        class_name = browse.find('div', class_='class-id')
+        class_name = browse.find('div', class_='result-meta flex-container')
 
         # if the name is valid, add 
         if class_name != None:
-            name = class_name.text.split()
-            delimiter = ' '
-            name = delimiter.join(name[0:-1])
-            temp_dep = Department(name, 'https://www.bruinwalk.com/search/?category=classes&dept=' + str(n))
-            all_deps.append(temp_dep)
+            all_deps.append('https://www.bruinwalk.com/search/?category=classes&dept=' + str(n))
     
     for _ in all_deps:
-        print(_.name)
+        print(_)
     print(len(all_deps))
 
+    
     # write the department names and hrefs to a csv file
     with open('ucla_department.csv', 'w', newline = '') as csvfile:
         fieldnames = ['name', 'link']
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
         writer.writeheader()
         for obj in all_deps:
-            writer.writerow({'name':obj.name, 'link':obj.href})
+            writer.writerow({'name':obj})
 
 
         
@@ -324,16 +316,14 @@ print(len(myL))
 
 department = []
 
-# grab departments from csv file
+get_department()
+print('done')
 with open('ucla_department.csv', 'r', newline = '') as csvfile:
     reader = csv.DictReader(csvfile)
     for row in reader:
-        temp_dep = Department(row['name'], row['link'])
+        temp_dep = row['name']
         department.append(temp_dep)
-
 print(len(department))
-
-
 
 
 
