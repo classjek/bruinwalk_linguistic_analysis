@@ -9,6 +9,7 @@ class Professor:
     def __init__(self, name):
         self.name = name
         self.classes = []
+        self.href = ""
 
 class Class:
     def __init__(self, name, href):
@@ -175,9 +176,10 @@ def every_professor(href, prof_list):
     for prof_comp in elems:
         prof_ref = prof_comp.find('div', 'flex-container professor-meta-content').find('a').get('href')
         prof_name = prof_comp.find('div', 'flex-container professor-meta-content').find(class_='professor-name flex-item flex-middle').text
-        #print(prof_name, '\n', prof_ref)
+        temp_prof = Professor(prof_name)
+        temp_prof.href = prof_ref
         
-        prof_list.append(prof_name)
+        prof_list.append(temp_prof)
 
     # grab the next page 
     pages = browse.find('div', 'paginator')
@@ -204,8 +206,6 @@ def all_professors(href):
     # return list full of professors
     return prof_list
 
-
-    
 
 
 # give an href to a prof's page and their name
@@ -245,11 +245,7 @@ def get_department():
 
         # if the name is valid, add 
         if class_name != None:
-            all_deps.append('https://www.bruinwalk.com/search/?category=classes&dept=' + str(n))
-    
-    for _ in all_deps:
-        print(_)
-    print(len(all_deps))
+            all_deps.append('https://www.bruinwalk.com/search/?category=professors&dept=' + str(n))
 
     
     # write the department names and hrefs to a csv file
@@ -316,14 +312,29 @@ print(len(myL))
 
 department = []
 
-get_department()
-print('done')
 with open('ucla_department.csv', 'r', newline = '') as csvfile:
     reader = csv.DictReader(csvfile)
     for row in reader:
         temp_dep = row['name']
         department.append(temp_dep)
 print(len(department))
+
+
+prof_list = []
+for dep in department[1:5]:
+    print(dep[25:])
+    temp_list = all_professors(dep[25:])
+    for _ in temp_list:
+        prof_list.append(_)
+
+print(len(prof_list))
+
+
+""""
+prof_list = all_professors(department[2][25:])
+print(len(prof_list))
+print(prof_list[0].name, '\n',  prof_list[0].href)
+"""
 
 
 
