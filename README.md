@@ -1,6 +1,11 @@
 # A Computational Linguistic Analysis of BruinWalk
 
-What's up team 
+What's up team   
+  
+[Word2Vec Tutorial](https://www.tensorflow.org/tutorials/text/word2vec)  
+
+
+
 
 Here are a couple of papers that have inspired this project.  
 [A Framework for the Computation Linguistic Analysis of Dehumanization](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7861242/)  

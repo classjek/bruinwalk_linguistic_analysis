@@ -178,6 +178,7 @@ def every_professor(href, prof_list):
         prof_name = prof_comp.find('div', 'flex-container professor-meta-content').find(class_='professor-name flex-item flex-middle').text
         temp_prof = Professor(prof_name)
         temp_prof.href = prof_ref
+        every_class(prof_ref, temp_prof.classes)
         
         prof_list.append(temp_prof)
 
