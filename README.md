@@ -4,7 +4,9 @@ What's up team
   
 [Word2Vec Tutorial](https://www.tensorflow.org/tutorials/text/word2vec)  
 
-
+  
+Book: (chapter 5 is great but to start I would watch a the first lecture or two from practical deep learning for coders, its roughly follows the book just with different examples)  
+[fastai fastbook](https://github.com/fastai/fastbook)
 
 
 Here are a couple of papers that have inspired this project.  
