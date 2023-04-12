@@ -27,7 +27,9 @@ And another
 and more fast.ai 
 [NLP for beginners](https://www.kaggle.com/code/jhoward/getting-started-with-nlp-for-absolute-beginners)  
 and something more general
-[MIT Data Centric AI](https://dcai.csail.mit.edu/)  
+[MIT Data Centric AI](https://dcai.csail.mit.edu/) 
+
+[Sentiment Analysis Using Python with DistilBERT](https://huggingface.co/blog/sentiment-analysis-python)
 
 
 
