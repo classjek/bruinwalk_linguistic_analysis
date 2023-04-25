@@ -34,7 +34,7 @@ and something more general
 
 
 Bruinwalk also doesn't include gender so we will also be training a model to do that. Below is an article by someone who did something similar as well as an API that we can compare out results to. And in cases where our model is unsure, we can check it by hand.  
-[Boy or Girl?](https://towardsdatascience.com/boy-or-girl-a-machine-learning-web-app-to-detect-gender-from-name-16dc0331716c)  
+[Name Based Gender Identification](https://www.analyticsvidhya.com/blog/2023/03/name-based-gender-identification-using-nlp-and-python/)  
 [Gender-API](gender-api.com)
 
 I have also been reading about a concept called Datasheets for Datasets. It is basically a thoughtful acknowledgement and documentation of how the data was sourced, how we accessed it, and its potential flaws. Here is where you can read more about it:     
@@ -54,3 +54,6 @@ Ethan Warren
 
 Tej Thambi   
 - [@tej-thambi](https://www.github.com/tej-thambi)
+
+Anika Misra
+- [@anikamisra] (https://www.github.com/anikamisra)
