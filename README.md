@@ -56,4 +56,4 @@ Tej Thambi
 - [@tej-thambi](https://www.github.com/tej-thambi)
 
 Anika Misra
-- [@anikamisra] (https://www.github.com/anikamisra)
+- [@anikamisra](https://github.com/anikamisra)
