@@ -2,6 +2,7 @@ import requests
 from bs4 import BeautifulSoup
 import time
 import csv
+import pandas as pd
 
 # each professor will have a list of reviews under their name
 # this is so we can easily test with different control variables without having to sort through every review 
@@ -311,14 +312,57 @@ myL = all_professors('/search/?category=professors')
 print(len(myL))
 """
 
+# testing all_professors, seems to be working well, but how much exactly does it get
 department = []
+prof_list = []
+prof_list = all_professors('/search/?category=professors&dept=9') #+ all_professors('/search/?category=professors&dept=10')
+print(len(prof_list))
 
+
+lol_reviews = [] # will be basis of csv file, list of lists
+# csv file format: 
+# prof, gender, class, reviewer, reviewGrade, reviewText
+
+# begin putting stuff into a csv file to see how it will be formatted to run the models on
+my_prof = prof_list[4]
+to_csv = []
+for claass in my_prof.classes:
+    if len(claass.reviews) > 0:
+        for review in claass.reviews:
+            to_csv.append([my_prof.name, 'NA', claass.name, review.name, review.grade, review.text])
+
+print('Number of reviews:', len(to_csv))
+
+df = pd.DataFrame(to_csv, columns=[['prof', 'gender', 'class', 'reviewer', 'review_grade', 'review_text']])
+print(df.shape[0], df.shape[1])
+
+df.to_csv('review_data.csv', index=False)
+
+
+
+
+
+""" bfs
+for num in range(len(prof_list)):
+    #print(prof.name)
+    for clas in prof_list[num].classes:
+        if len(clas.reviews) > 0:
+            print(prof_list[num].name, num, clas.name)
+"""
+
+
+
+
+# read department names from csv file and place them into 
+"""
+department = []
 with open('ucla_department.csv', 'r', newline = '') as csvfile:
     reader = csv.DictReader(csvfile)
     for row in reader:
         temp_dep = row['name']
         department.append(temp_dep)
 print(len(department))
+
 
 
 prof_list = []
@@ -329,12 +373,6 @@ for dep in department[1:5]:
         prof_list.append(_)
 
 print(len(prof_list))
-
-
-""""
-prof_list = all_professors(department[2][25:])
-print(len(prof_list))
-print(prof_list[0].name, '\n',  prof_list[0].href)
 """
 
 
