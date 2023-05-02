@@ -16,16 +16,23 @@ os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "../../priv/gender-model-006f0132
 
 client = bigquery.Client()
 
+# query = f"""
+#     SELECT name, gender
+#     FROM `bigquery-public-data.usa_names.usa_1910_current` 
+#     LIMIT 1000
+# """
+
 query = f"""
     SELECT name, gender
-    FROM `bigquery-public-data.usa_names.usa_1910_current` 
-    LIMIT 1000
+    FROM `bigquery-public-data.usa_names.usa_1910_current`
+    ORDER BY name
+    LIMIT 50000
+    OFFSET 3130752
 """
+
 
 query_job = client.query(query)
 df = query_job.to_dataframe()
-
-print(df.head(5))
 
 ######PREPROCESSING DATA##########
 def preprocess(names_df, train=True):
@@ -56,7 +63,6 @@ def preprocess(names_df, train=True):
     return names_df
 
 processed_df = preprocess(df)
-print(processed_df.head())
 
 ######LSTM MODEL##########
 def lstm_model(num_alphabets=27, name_length=50, embedding_dim=256):
