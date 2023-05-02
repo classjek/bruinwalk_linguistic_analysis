@@ -33,7 +33,7 @@ and something more general
 
 [Pretrained Sentiment Analysis Model](https://github.com/pysentimiento/pysentimiento)
 
-[Skip Grams word2vec walkthrough] (https://github.com/priya-dwivedi/Deep-Learning/blob/master/word2vec_skipgram/Skip-Grams-Solution.ipynb)
+[Skip Grams word2vec walkthrough](https://github.com/priya-dwivedi/Deep-Learning/blob/master/word2vec_skipgram/Skip-Grams-Solution.ipynb)
 
 
 Bruinwalk also doesn't include gender so we will also be training a model to do that. Below is an article by someone who did something similar as well as an API that we can compare out results to. And in cases where our model is unsure, we can check it by hand.  
