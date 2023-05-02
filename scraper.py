@@ -67,15 +67,14 @@ def through_class(class_name, href):
 
     # intialize Class object
     one_class = Class(class_name, href)
-    one_class.abrev = ""
 
     # just put this in the for loop lol
-    val = grab_reviews(href, 'dummyName', one_class.reviews, one_class.abrev)
+    val = grab_reviews(href, 'dummyName', one_class.reviews, one_class)
 
     # add reviews from each page to one_class's list of reviews
     # grab_reviews will return 0 if there exist no more pages 
     while val != 0:
-        val = grab_reviews(val, 'dummyName', one_class.reviews, one_class.abrev)
+        val = grab_reviews(val, 'dummyName', one_class.reviews, one_class)
     
     return one_class
 
@@ -83,7 +82,7 @@ def through_class(class_name, href):
 
 # make this return 0 or the href of the next page 
 # given an href for a page of reviews, this will grab the text and grade from each review and return a list of them 
-def grab_reviews(href, prof_name, revlist, name_class):
+def grab_reviews(href, prof_name, revlist, one_class):
 
     #print(prof_name.name)
     # load the web page 
@@ -93,11 +92,10 @@ def grab_reviews(href, prof_name, revlist, name_class):
     except Exception as exc:
         print("There was a problem fetching a class page: %s" % (exc))
 
-    if name_class == "":
+    if one_class.abrev == "":
         class_page = BeautifulSoup(response.text, 'html.parser')
-        header = class_page.find('span', 'aggregate-type-badge').text
-        name_class = header
-
+        header = class_page.find('span', class_='aggregate-type-badge').text
+        one_class.abrev = header
 
 
     # get every review in a list called reviews 
@@ -164,7 +162,7 @@ def every_class(href, class_list):
 
     # grab the next page 
     pages = browse.find('div', 'paginator')
-    if type(pages) == 'NoneType': # ooh I am adding this much later. Do not know how it will do 
+    if pages is None:
         return 0
     span = pages.find_all('a')
     if span[1].get('href') == None:
@@ -269,10 +267,6 @@ def get_department():
             writer.writerow({'name':obj})
 
 
-        
-
-
-
 
 
 start_time = time.time()
@@ -339,7 +333,7 @@ with open('ucla_department.csv', 'r', newline = '') as csvfile:
         department.append(temp_dep)
 
 prof_list = []
-for dep in department[1:2]: # remember to start at 1 
+for dep in department[1:50]: # remember to start at 1 
     print(dep[25:])
     temp_list = all_professors(dep[25:])
     for _ in temp_list:
@@ -360,7 +354,7 @@ for prof in prof_list:
     for claass in my_prof.classes:
         if len(claass.reviews) > 0:
             for review in claass.reviews:
-                to_csv.append([my_prof.name, 'NA', claass.name, review.name, review.grade, review.text])
+                to_csv.append([my_prof.name, 'NA', claass.name, claass.abrev, review.grade, review.text])
 
 # begin putting stuff into a csv file to see how it will be formatted to run the models on
 """
@@ -374,47 +368,14 @@ for claass in my_prof.classes:
 
 print('Number of reviews:', len(to_csv))
 
-df = pd.DataFrame(to_csv, columns=[['prof', 'gender', 'class', 'reviewer', 'review_grade', 'review_text']])
+df = pd.DataFrame(to_csv, columns=[['prof', 'gender', 'class', 'class_abrev', 'review_grade', 'review_text']])
 print(df.shape[0], df.shape[1])
 
 df.to_csv('review_data.csv', index=False)
 
 
-
-
-
-""" bfs
-for num in range(len(prof_list)):
-    #print(prof.name)
-    for clas in prof_list[num].classes:
-        if len(clas.reviews) > 0:
-            print(prof_list[num].name, num, clas.name)
-"""
-
-
-
-
-# read department names from csv file and place them into 
-"""
-department = []
-with open('ucla_department.csv', 'r', newline = '') as csvfile:
-    reader = csv.DictReader(csvfile)
-    for row in reader:
-        temp_dep = row['name']
-        department.append(temp_dep)
-print(len(department))
-
-
-
-prof_list = []
-for dep in department[1:5]:
-    print(dep[25:])
-    temp_list = all_professors(dep[25:])
-    for _ in temp_list:
-        prof_list.append(_)
-
-print(len(prof_list))
-"""
+# overall how is the webscraper working
+# it is good, gets department, teacher, just need to run the big dawg
 
 
 
@@ -422,8 +383,3 @@ end_time = time.time()
 runtime = end_time - start_time
 
 print(f"Run time: {runtime:.2f} seconds")
-
-
-
-
-
