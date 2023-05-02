@@ -16,6 +16,7 @@ class Class:
     def __init__(self, name, href):
         self.name = name
         self.href = href
+        self.abrev = ""
         self.reviews = []
 
 class Review:
@@ -66,14 +67,15 @@ def through_class(class_name, href):
 
     # intialize Class object
     one_class = Class(class_name, href)
+    one_class.abrev = ""
 
     # just put this in the for loop lol
-    val = grab_reviews(href, 'dummyName', one_class.reviews)
+    val = grab_reviews(href, 'dummyName', one_class.reviews, one_class.abrev)
 
     # add reviews from each page to one_class's list of reviews
     # grab_reviews will return 0 if there exist no more pages 
     while val != 0:
-        val = grab_reviews(val, 'dummyName', one_class.reviews)
+        val = grab_reviews(val, 'dummyName', one_class.reviews, one_class.abrev)
     
     return one_class
 
@@ -81,7 +83,7 @@ def through_class(class_name, href):
 
 # make this return 0 or the href of the next page 
 # given an href for a page of reviews, this will grab the text and grade from each review and return a list of them 
-def grab_reviews(href, prof_name, revlist):
+def grab_reviews(href, prof_name, revlist, name_class):
 
     #print(prof_name.name)
     # load the web page 
@@ -90,6 +92,12 @@ def grab_reviews(href, prof_name, revlist):
         response.raise_for_status()
     except Exception as exc:
         print("There was a problem fetching a class page: %s" % (exc))
+
+    if name_class == "":
+        class_page = BeautifulSoup(response.text, 'html.parser')
+        header = class_page.find('span', 'aggregate-type-badge').text
+        name_class = header
+
 
 
     # get every review in a list called reviews 
@@ -156,6 +164,8 @@ def every_class(href, class_list):
 
     # grab the next page 
     pages = browse.find('div', 'paginator')
+    if type(pages) == 'NoneType': # ooh I am adding this much later. Do not know how it will do 
+        return 0
     span = pages.find_all('a')
     if span[1].get('href') == None:
         return 0
@@ -313,23 +323,54 @@ print(len(myL))
 """
 
 # testing all_professors, seems to be working well, but how much exactly does it get
+""" old way of getting professors 
 department = []
 prof_list = []
 prof_list = all_professors('/search/?category=professors&dept=9') #+ all_professors('/search/?category=professors&dept=10')
 print(len(prof_list))
+"""
+
+# get professors from every department
+department = []
+with open('ucla_department.csv', 'r', newline = '') as csvfile:
+    reader = csv.DictReader(csvfile)
+    for row in reader:
+        temp_dep = row['name']
+        department.append(temp_dep)
+
+prof_list = []
+for dep in department[1:2]: # remember to start at 1 
+    print(dep[25:])
+    temp_list = all_professors(dep[25:])
+    for _ in temp_list:
+        prof_list.append(_)
+
+print('Number of professors from all deps', len(prof_list))
 
 
 lol_reviews = [] # will be basis of csv file, list of lists
 # csv file format: 
 # prof, gender, class, reviewer, reviewGrade, reviewText
 
+to_csv = []
+
+# visit every professor and grab their reviews, adding to df 
+for prof in prof_list:
+    my_prof = prof; 
+    for claass in my_prof.classes:
+        if len(claass.reviews) > 0:
+            for review in claass.reviews:
+                to_csv.append([my_prof.name, 'NA', claass.name, review.name, review.grade, review.text])
+
 # begin putting stuff into a csv file to see how it will be formatted to run the models on
+"""
 my_prof = prof_list[4]
 to_csv = []
 for claass in my_prof.classes:
     if len(claass.reviews) > 0:
         for review in claass.reviews:
             to_csv.append([my_prof.name, 'NA', claass.name, review.name, review.grade, review.text])
+"""
 
 print('Number of reviews:', len(to_csv))
 
