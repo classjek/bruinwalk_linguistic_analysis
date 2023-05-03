@@ -22,7 +22,7 @@ from pysentimiento import create_analyzer
 import csv
 
 reviews = []
-with open('./bertweet-sentiment-analysis/revs.csv', 'r') as f:
+with open('./bertweet-sentiment-analysis/1600.csv', 'r') as f:
     reader = csv.reader(f)
     next(reader)
     for row in reader:
@@ -30,7 +30,7 @@ with open('./bertweet-sentiment-analysis/revs.csv', 'r') as f:
 
 sentiment_analyzer = create_analyzer(task="sentiment", lang="en")
 
-with open('./bertweet-sentiment-analysis/revs_with_sentiment.csv', 'w', newline='') as f:
+with open('./bertweet-sentiment-analysis/revs_with_sentiment1600.csv', 'w', newline='') as f:
     writer = csv.writer(f)
     writer.writerow(['prof', 'gender', 'class', 'reviewer', 'review_grade', 'review_text', 'sentiment'])
     for review in reviews:
