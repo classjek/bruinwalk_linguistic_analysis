@@ -333,7 +333,7 @@ with open('ucla_department.csv', 'r', newline = '') as csvfile:
         department.append(temp_dep)
 
 prof_list = []
-for dep in department[1:50]: # remember to start at 1 
+for dep in department[1:]: # remember to start at 1 
     print(dep[25:])
     temp_list = all_professors(dep[25:])
     for _ in temp_list:
